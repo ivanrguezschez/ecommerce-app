@@ -15,6 +15,10 @@
 	<name>ecommerce-back</name>
 	<description>E-Commerce Back App (Spring Boot, Spring Cloud)</description>
 
+	<modules>
+		<module>config-service</module>
+	</modules>
+
 	<properties>
 		<java.version>21</java.version>
 	</properties>
