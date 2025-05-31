@@ -1,10 +1,10 @@
-package com.irs.ecommerce.microservices.customerservice;
+package com.irs.ecommerce.microservices.commonexceptions;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CustomerServiceApplicationTests {
+class CommonExceptionsApplicationTests {
 
 	@Test
 	void contextLoads() {
