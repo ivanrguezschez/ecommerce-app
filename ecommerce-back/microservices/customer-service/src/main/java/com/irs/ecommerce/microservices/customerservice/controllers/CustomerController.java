@@ -29,13 +29,13 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createCustomer(@RequestBody @Valid CustomerRequestDTO customerRequestDTO) {
+    public ResponseEntity<String> createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
         //return ResponseEntity.ok(this.customerService.save(customerRequestDTO));
         return new ResponseEntity<>(this.customerService.save(customerRequestDTO), HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateCustomer(@RequestBody @Valid CustomerRequestDTO customerRequestDTO) {
+    public ResponseEntity<Void> updateCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
         this.customerService.save(customerRequestDTO);
         return ResponseEntity.accepted().build();
     }

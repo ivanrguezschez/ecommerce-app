@@ -1,5 +1,6 @@
 package com.irs.ecommerce.microservices.customerservice.services.Impl;
 
+import com.irs.ecommerce.microservices.customerservice.exceptions.CustomerNotFoundException;
 import com.irs.ecommerce.microservices.customerservice.models.collections.Customer;
 import com.irs.ecommerce.microservices.customerservice.models.dtos.CustomerRequestDTO;
 import com.irs.ecommerce.microservices.customerservice.models.dtos.CustomerResponseDTO;
@@ -8,6 +9,7 @@ import com.irs.ecommerce.microservices.customerservice.services.CustomerService;
 import com.irs.ecommerce.microservices.customerservice.mappers.CustomerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -27,10 +29,16 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO getCustomerById(String customerId) {
         return this.customerRepository.findById(customerId)
                 .map(this.customerMapper::toCustomerResponse)
-                .orElseThrow();
+                .orElseThrow(() -> new CustomerNotFoundException(String.format("Customer with id %s not found", customerId)));
     }
 
     public String save(CustomerRequestDTO customerRequestDTO) {
+        if (StringUtils.hasText(customerRequestDTO.id())) {
+            // Si es una actualizacion debe venir y existir el customer a actualizar, si no encuentra el cliente lanza una excepcion
+            this.customerRepository.findById(customerRequestDTO.id())
+                    .orElseThrow(() -> new CustomerNotFoundException(String.format("Customer with id %s not found", customerRequestDTO.id())));
+        }
+
         Customer customer = this.customerMapper.toCustomer(customerRequestDTO);
         Customer customerSaved = this.customerRepository.save(customer);
 
@@ -39,7 +47,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     public void deleteById(String customerId) {
         // Si no encuentra el cliente lanza una excepcion
-        this.customerRepository.findById(customerId).orElseThrow();
+        this.customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(String.format("Customer with id %s not found", customerId)));
 
         this.customerRepository.deleteById(customerId);
     }

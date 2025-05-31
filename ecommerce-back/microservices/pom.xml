@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>customer-service</module>
+		<module>common-exceptions</module>
 	</modules>
 
 	<properties>
