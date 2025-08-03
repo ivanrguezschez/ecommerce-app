@@ -47,3 +47,6 @@ Endpoints:
         ```
 * Delete By Id
   * DELETE http://localhost:8091/api/v1/customers/6809f6b744a3a941e038cfe5
+
+### microservices - common-exceptions
+Módulo común de excepciones para el resto de microservicio (customer, etc).
