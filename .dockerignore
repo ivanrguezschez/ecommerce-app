@@ -1,0 +1,31 @@
+# Ignorar carpetas y archivos generados por el sistema de construcción maven
+**/target/
+**/.git/
+**/.idea/
+**/.vscode/
+.mvn/
+**/mvnw
+**/mvnw.cmd
+
+# Ignorar archivos de ide's
+./idea/
+./vscode/
+*.iws
+*.iml
+*.ipr
+
+# Ignorar logs y archivos temporales
+**/logs
+tmp/
+
+# Ignorar control de versiones
+.git
+.gitignore
+
+# Ignorar el propio Dockerfile y Docker Compose
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Ignorar archivos de configuración sensibles
+*.env

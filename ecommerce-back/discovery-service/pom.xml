@@ -6,15 +6,12 @@
 		<groupId>com.irs</groupId>
 		<artifactId>ecommerce-back</artifactId>
 		<version>1.0.0</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>discovery-service</artifactId>
 	<name>discovery-service</name>
 	<description>Discovery Service (Spring Cloud Discovery Server - Eureka)</description>
-
-	<properties>
-		<spring-cloud.version>2024.0.1</spring-cloud.version>
-	</properties>
 
 	<dependencies>
 		<dependency>
@@ -25,24 +22,12 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<build>
 		<plugins>

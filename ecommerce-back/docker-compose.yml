@@ -1,29 +1,112 @@
 services:
-  mongodb:
+  mongo:
     image: mongo
-    container_name: mongodb
+    container_name: customer_mongo_db
     ports:
-      - "27017:27017"
+      - "${MONGO_DB_PORT}:27017"
     volumes:
       - mongo:/data/db
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=pass
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
+    networks:
+      - ecommerce-microservices
 
   postgres:
-    container_name: product_postgres_db
     image: postgres:16.2
+    container_name: product_postgres_db
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: product_db
-      PGDATA: /data/postgres
+      - POSTGRES_USER=${POSTGRESQL_DB_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRESQL_DB_PASSWORD}
+      - POSTGRES_DB=${PRODUCT_DB_NAME}
+      - PGDATA=/data/postgres
     volumes:
       - postgres:/data/postgres
     ports:
-      - "5432:5432"
+      - "${POSTGRESQL_DB_PORT}:5432"
+    networks:
+      - ecommerce-microservices
+
+  config-service:
+    build:
+      context: .
+      dockerfile: ./config-service/Dockerfile
+    container_name: config-service
+    ports:
+      - "${CONFIG_SERVICE_PORT}:8888"
+    networks:
+      - ecommerce-microservices
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://config-service:${CONFIG_SERVICE_PORT}/actuator/health"]
+      interval: 20s
+      timeout: 3s
+      retries: 5
+    restart: on-failure
+
+  discovery-service:
+    build:
+      context: .
+      dockerfile: ./discovery-service/Dockerfile
+    container_name: discovery-service
+    depends_on:
+      config-service:
+        condition: service_healthy
+    ports:
+      - "${DISCOVERY_SERVICE_PORT}:8761"
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-service:${CONFIG_SERVICE_PORT}
+    networks:
+      - ecommerce-microservices
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://discovery-service:${DISCOVERY_SERVICE_PORT}/actuator/health"]
+      interval: 20s
+      timeout: 3s
+      retries: 5
+    restart: on-failure
+
+  customer-service:
+    build:
+      context: .
+      dockerfile: ./microservices/customer-service/Dockerfile
+    container_name: customer-service
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+    ports:
+      - "${CUSTOMER_SERVICE_PORT}:8091"
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-service:${CONFIG_SERVICE_PORT}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:${DISCOVERY_SERVICE_PORT}/eureka/
+      - SPRING_MONGODB_URI=mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@mongo:${MONGO_DB_PORT}/${CUSTOMER_DB_NAME}?authSource=admin
+    networks:
+      - ecommerce-microservices
+
+  product-service:
+    build:
+      context: .
+      dockerfile: ./microservices/product-service/Dockerfile
+    container_name: product-service
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    ports:
+      - "${PRODUCT_SERVICE_PORT}:8092"
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-service:${CONFIG_SERVICE_PORT}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:${DISCOVERY_SERVICE_PORT}/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:${POSTGRESQL_DB_PORT}/${PRODUCT_DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD}
     networks:
       - ecommerce-microservices
 

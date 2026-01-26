@@ -150,3 +150,24 @@ Endpoints Product:
           }
         ]
         ```
+
+### Dockerizando Servicios
+Se dockerizan los servicios de config, discovery, customer y product para añadir en un futuro mas servicios y facilitar las pruebas levantando todos los servicios a la vez a través de docker compose.
+
+Notas sobre docker compose:
+* Lenvantar los servicios
+  * docker-compose up -d --build
+    * up: arranca todos los servicios definidos en docker-compose.yml
+    * -d: los corre en segundo plano (detached)
+    * --build: fuerza la reconstrucción de las imágenes antes de levantar los contenedores
+* Ver qué servicios están corriendo
+  * docker-compose ps
+* Ver logs en tiempo real
+  * docker-compose logs -f discovery-server
+    * logs: muestra los logs de un servicio
+    * -f: sigue los logs en tiempo real
+* Reiniciar un servicio
+  * docker-compose restart customer-microservice
+* Detener y limpiar todo
+  * docker-compose down
+  * docker-compose down --rmi local -v

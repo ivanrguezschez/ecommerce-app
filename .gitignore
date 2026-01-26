@@ -49,3 +49,6 @@ Thumbs.db
 
 ### logs ###
 **/logs
+
+### Ignorar archivos de configuración sensibles ###
+*.env
