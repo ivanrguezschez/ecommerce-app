@@ -29,7 +29,8 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO getCustomerById(String customerId) {
         return this.customerRepository.findById(customerId)
                 .map(this.customerMapper::toCustomerResponse)
-                .orElseThrow(() -> new CustomerNotFoundException(String.format("Customer with id %s not found", customerId)));
+                //.orElseThrow(() -> new CustomerNotFoundException(String.format("Customer with id %s not found", customerId))); Se comenta para que devuelva null al cart-service
+                .orElse(null);
     }
 
     public String save(CustomerRequestDTO customerRequestDTO) {

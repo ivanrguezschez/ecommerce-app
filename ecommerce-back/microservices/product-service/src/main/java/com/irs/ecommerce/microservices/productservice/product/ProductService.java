@@ -29,8 +29,8 @@ public class ProductService {
         }
         return this.productRepository.findById(id)
                 .map(this.productMapper::toProductResponse)
-                //.orElse(null);
-                .orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(id)));
+                .orElse(null);
+                //.orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(id))); Se comenta para que devuelva null al cart-service
     }
 
     public List<ProductResponse> getProductsByCategoryId(Integer id) {

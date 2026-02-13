@@ -151,6 +151,38 @@ Endpoints Product:
         ]
         ```
 
+### microservices - cart-service
+Microservicio del carrito de compras (cart), hace uso de una base de datos MongoDB (docker-compose).
+
+Endpoints Cart:
+* Find By CustomerId (Obtiene el carrito de compras del cliente)
+  * GET `http://localhost:8093/api/v1/{customerId}/cart`
+* Delete (Elimina, vacía, el carrito de compras del cliente)
+  * DELETE `http://localhost:8093/api/v1/{customerId}/cart`
+
+Endpoints CartItem:
+* Create o Save (Agrega un producto al carrito de compras del cliente (no reserva el stock). Crea el carrito si no existe)
+  * POST `http://localhost:8093/api/v1/{customerId}/cart/items`
+    * Body
+      ```
+      {
+        "productId": "1",
+        "quantity": "1",
+      }
+      ```
+* Update (Modifica la cantidad de un item)
+  * PUT `http://localhost:8093/api/v1/{customerId}/cart/items`
+    * Body
+         ```
+         {
+           "productId": "1",
+           "quantity": "2",
+         }
+         ```
+* Delete (Elimina un producto del carrito del cliente)
+  * DELETE `http://localhost:8093/api/v1/{customerId}/cart/items/{idProducto}`
+
+
 ### Dockerizando Servicios
 Se dockerizan los servicios de config, discovery, customer y product para añadir en un futuro mas servicios y facilitar las pruebas levantando todos los servicios a la vez a través de docker compose.
 
@@ -160,6 +192,9 @@ Notas sobre docker compose:
     * up: arranca todos los servicios definidos en docker-compose.yml
     * -d: los corre en segundo plano (detached)
     * --build: fuerza la reconstrucción de las imágenes antes de levantar los contenedores
+* Lenvantar un servicio concreto
+  * docker-compose up -d --build --no-deps <service_name> (Ejemplo: docker-compose up -d --build --no-deps customer-service)
+    * --no-deps: no compilar las dependencias (Por ejemplo en el servicio de customer: config-service, discovery-service y mongo)
 * Ver qué servicios están corriendo
   * docker-compose ps
 * Ver logs en tiempo real
@@ -171,3 +206,6 @@ Notas sobre docker compose:
 * Detener y limpiar todo
   * docker-compose down
   * docker-compose down --rmi local -v
+* Detener un servicio concreto
+  * docker-compose down <service_name> (Ejemplo: docker-compose down customer-service)
+
