@@ -5,8 +5,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.4</version>
-		<!--<version>4.0.1</version>-->
+		<!--<version>3.4.4</version>-->
+		<version>4.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.irs</groupId>
@@ -19,14 +19,15 @@
 	<modules>
 		<module>config-service</module>
 		<module>discovery-service</module>
+		<module>gateway-service</module>
 		<module>microservices</module>
 	</modules>
 
 	<properties>
 		<java.version>21</java.version>
 		<!--<java.version>25</java.version>-->
-		<spring-cloud.version>2024.0.1</spring-cloud.version>
-		<!--<spring-cloud.version>2025.1.0</spring-cloud.version>-->
+		<!--<spring-cloud.version>2024.0.1</spring-cloud.version>-->
+		<spring-cloud.version>2025.1.0</spring-cloud.version>
 	</properties>
 
 	<dependencies>

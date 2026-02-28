@@ -13,6 +13,18 @@ Servicio de configuración centralizada (Spring Cloud Config Server) basada en f
 Servicio de registro y búsqueda de servicios (Spring Cloud Discovery Server - Eureka) donde registramos los servicios (config, customer) de la aplicación.
 
 
+### gateway-service
+Servicio de API gateway (Spring Cloud Gateway Server Webflux) desde donde accederemos a todos los endpoint de los microservicios de la aplicación (customer, product y cart).
+
+Por ejemplo el endpoint "Find All" del servicio de clientes (customers) pasa de 
+
+GET `http://localhost:8091/api/v1/customers` 
+
+a 
+
+GET `http://localhost:8222/api/v1/customers`
+
+
 ### microservices - common-exceptions
 Módulo común de excepciones para el resto de microservicio (customer, etc).
 
@@ -208,4 +220,3 @@ Notas sobre docker compose:
   * docker-compose down --rmi local -v
 * Detener un servicio concreto
   * docker-compose down <service_name> (Ejemplo: docker-compose down customer-service)
-
