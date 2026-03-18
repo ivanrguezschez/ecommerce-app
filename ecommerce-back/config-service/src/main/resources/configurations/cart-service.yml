@@ -19,3 +19,12 @@ logging:
     name: logs/cart-service.log
     max-size: 10MB
     max-history: 5
+management:
+  endpoints:
+    web:
+      exposure:
+        # include: health, info, beans, metrics, env
+        include: health, info, prometheus
+  endpoint:
+    health:
+      show-details: always

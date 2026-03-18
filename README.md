@@ -12,6 +12,7 @@ Servicio de configuración centralizada (Spring Cloud Config Server) basada en f
 ### discovery-service
 Servicio de registro y búsqueda de servicios (Spring Cloud Discovery Server - Eureka) donde registramos los servicios (config, customer) de la aplicación.
 
+Url: http://localhost:8761
 
 ### gateway-service
 Servicio de API gateway (Spring Cloud Gateway Server Webflux) desde donde accederemos a todos los endpoint de los microservicios de la aplicación (customer, product y cart).
@@ -220,3 +221,80 @@ Notas sobre docker compose:
   * docker-compose down --rmi local -v
 * Detener un servicio concreto
   * docker-compose down <service_name> (Ejemplo: docker-compose down customer-service)
+
+
+### Observabilidad (Spring Boot Actuator, Prometheus y Grafana)
+* Monitoreo: supervisar métricas y alertas predefinidas, naturaleza reactiva (detecta sintomas), herramientas (Zabbix, Nagios, CloudWatch).
+* Observabilidad: comprender el estado interno del sistema a partir de sus salidas, naturaleza proactivo (ayuda a descubrir causas), herramientas (Prometheus, Grafana, Elastic Observability, Jaeger).
+  * Definición: la capacidad de comprender el estado interno de un sistema examinando sus salidas externas, especialmente sus datos, mediante la recopilación y análisis de logs, métricas y trazas.
+  * Fases:
+    * Instrumentación: capturar información sobre el estado de la aplicación, métricas de rendimiento, etc.
+      
+      Spring Boot Actuator: expone las entrañas de nuestra aplicación (salud, métricas, hilos, etc).
+    * Colección de Métricas: obtener métricas y almacenarlas.
+      
+      Prometheus: recolector, visita cada microservicio, extrae las métricas y las guarda en una base de datos de series temporales.
+    * Visualización: visualizar los datos de valor de manera gráfica a traves de cuadros de mando (dashboards).
+      
+      Grafana: toma los datos brutos de Prometheus y los convierte en paneles visuales.
+
+#### Spring Boot Actuator
+Módulo de Spring Boot que expone endpoints para monitorear y administrar la aplicación (en nuestro caso las APIs REST de nuestros microservicios) en tiempo de ejecución. Brinda métricas, información del estado, configuración, logs y más.
+
+Cada uno de los microservicios expondrá métricas en /actuator/prometheus (por ejemplo para el microservicio de discovery http://localhost:8761/actuator/prometheus).
+
+* pom.xml
+```
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+* application.yml
+```
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    health:
+      show-details: always
+```
+
+#### Prometheus
+Conjunto de herramientas de supervisión y alertas que recolecta métricas en formato de series temporales. Cada métrica tiene etiqueras y una marca de tiempo, lo que nos permite analizar tendencias y comportamientos.
+
+La arquitectura es simple: 
+* Scraping: prometheus se conecta a los endpoints de métricas y los consulta periódicamente (consultar el endpoint /actuator/prometheus de cada microservicio).
+* Guarda todas las métricas en bases de datos de series temporales.
+* Se configura mediante static_config o por medio de descubrimiento automático (vía Eureka).
+
+Configuración:
+* pom.xml
+```
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+```
+* prometheus.yml
+```
+scrape_configs:
+  - job_name: 'mode'
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8080', 'localhost:8081', ...]
+```
+* Url: http://localhost:9090
+
+
+#### Grafana
+Herramienta de visualización de datos. Se utiliza para transformar métricas y registros en paneles interactivos y fáciles de entender. Popular en arquitecturas de microservicios porque permite observar el estado de cada servicio en tiempo real.
+
+* Url: http://localhost:3000
+* Definimos un "data source" a Prometheus (Prometheus server URL: http://prometheus:9090).
+* Definimos un dashboard (A modo de ejemplo importamos "Spring Boot Endpoint Metrics" con ID 17024 de https://grafana.com/)
+   
+  

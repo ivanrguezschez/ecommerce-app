@@ -31,8 +31,10 @@ services:
 
   config-service:
     build:
-      context: .
-      dockerfile: ./config-service/Dockerfile
+      # context: .
+      # dockerfile: ./config-service/Dockerfile
+      context: ./config-service
+      dockerfile: Dockerfile
     container_name: config-service
     ports:
       - "${CONFIG_SERVICE_PORT}:8888"
@@ -47,8 +49,10 @@ services:
 
   discovery-service:
     build:
-      context: .
-      dockerfile: ./discovery-service/Dockerfile
+      # context: .
+      # dockerfile: ./discovery-service/Dockerfile
+      context: ./discovery-service
+      dockerfile: Dockerfile
     container_name: discovery-service
     depends_on:
       config-service:
@@ -68,8 +72,10 @@ services:
 
   customer-service:
     build:
-      context: .
-      dockerfile: ./microservices/customer-service/Dockerfile
+      # context: .
+      # dockerfile: ./microservices/customer-service/Dockerfile
+      context: ./microservices/customer-service
+      dockerfile: Dockerfile
     container_name: customer-service
     depends_on:
       config-service:
@@ -91,8 +97,10 @@ services:
 
   product-service:
     build:
-      context: .
-      dockerfile: ./microservices/product-service/Dockerfile
+      # context: .
+      # dockerfile: ./microservices/product-service/Dockerfile
+      context: ./microservices/product-service
+      dockerfile: Dockerfile
     container_name: product-service
     depends_on:
       config-service:
@@ -116,8 +124,10 @@ services:
 
   cart-service:
     build:
-      context: .
-      dockerfile: ./microservices/cart-service/Dockerfile
+      # context: .
+      # dockerfile: ./microservices/cart-service/Dockerfile
+      context: ./microservices/cart-service
+      dockerfile: Dockerfile
     container_name: cart-service
     depends_on:
       config-service:
@@ -139,8 +149,10 @@ services:
 
   gateway-service:
     build:
-      context: .
-      dockerfile: ./gateway-service/Dockerfile
+      # context: .
+      # dockerfile: ./gateway-service/Dockerfile
+      context: ./gateway-service
+      dockerfile: Dockerfile
     container_name: gateway-service
     depends_on:
       config-service:
@@ -155,9 +167,35 @@ services:
     networks:
       - ecommerce-microservices
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ecommerce-microservices_prometheus
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - ecommerce-microservices
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ecommerce-microservices_grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_GRAFANA_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    depends_on:
+      - prometheus
+    networks:
+      - ecommerce-microservices
+
 volumes:
   mongo:
   postgres:
+  grafana-data:
 
 networks:
   ecommerce-microservices:
