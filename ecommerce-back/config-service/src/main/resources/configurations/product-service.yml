@@ -34,3 +34,12 @@ management:
   endpoint:
     health:
       show-details: always
+springdoc:
+  openapi:
+    info:
+      title: Product Microservice API
+      description: Servicio para gestionar los productos de la aplicación e-commerce.
+      version: 1.0.0
+      contact:
+        name: Equipo de Soporte
+        email: support@mail.com

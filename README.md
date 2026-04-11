@@ -296,5 +296,18 @@ Herramienta de visualización de datos. Se utiliza para transformar métricas y 
 * Url: http://localhost:3000
 * Definimos un "data source" a Prometheus (Prometheus server URL: http://prometheus:9090).
 * Definimos un dashboard (A modo de ejemplo importamos "Spring Boot Endpoint Metrics" con ID 17024 de https://grafana.com/)
-   
-  
+
+
+### Documentación API (Spring Doc, Open API, Swagger)
+Documentar las API's HTTP de los microservicios empleando el estándar Open API y usar la herramienta gráfica Swagger para visualizar dicha documentación en un navegador.
+
+Para ello empleamos Spring Doc, Open API y Swagger.
+
+* gateway-service: reactivo (spring webflux)
+  http://localhost:8222/swagger-ui/index.html
+* customer-service: imperativo (spring mvc)
+  http://localhost:8091/v3/api-docs
+* product-service: imperativo (spring mvc)
+  http://localhost:8092/v3/api-docs
+* cart-service: imperativo (spring mvc)
+  http://localhost:8093/v3/api-docs  
