@@ -293,7 +293,7 @@ scrape_configs:
 #### Grafana
 Herramienta de visualización de datos. Se utiliza para transformar métricas y registros en paneles interactivos y fáciles de entender. Popular en arquitecturas de microservicios porque permite observar el estado de cada servicio en tiempo real.
 
-* Url: http://localhost:3000
+* Url: http://localhost:3000 (Usr: admin, Pwd: admin, solicita resetear esta password por defecto, se puede saltar ese paso y dejar la password por defecto)
 * Definimos un "data source" a Prometheus (Prometheus server URL: http://prometheus:9090).
 * Definimos un dashboard (A modo de ejemplo importamos "Spring Boot Endpoint Metrics" con ID 17024 de https://grafana.com/)
 
@@ -311,3 +311,22 @@ Para ello empleamos Spring Doc, Open API y Swagger.
   http://localhost:8092/v3/api-docs
 * cart-service: imperativo (spring mvc)
   http://localhost:8093/v3/api-docs  
+
+
+### Balanceador de Carga (Spring Cloud LoadBalancer)
+Framework de balance de carga del lado del cliente (antiguo Netflix Ribbon).
+
+El propio cliente http, quien hace la petición (que puede ser un microservicio) descarga la lista de servicios disponibles (Discovery Service) y es el cliente quien ejecuta localmente la lógica para elegir a que servicio atiende la petición, eliminando dependencias de intermediarios centrales.
+
+Añadir la dependencia
+```
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+</dependency>
+```
+
+Comando de docker compose para arrancar (levantar) mas de una instancia de un microservicio
+```
+$ docker-compose up -d --build --scale cart-service=2 --scale product-service=2
+```

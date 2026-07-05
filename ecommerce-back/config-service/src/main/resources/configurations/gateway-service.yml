@@ -21,9 +21,16 @@ spring:
             - id: cart-service
               uri: lb://cart-service
               predicates:
-                - Path=/api/v1/cart/**
+                #- Path=/api/v1/cart/**
+                - Path=/api/v1/*/cart/**
+              #filters:
+                #- PreserveHostHeader
+                #- RewritePath=/api/v1/cart/v3/api-docs, /v3/api-docs
+            - id: cart-service-swagger
+              uri: lb://cart-service
+              predicates:
+                - Path=/api/v1/cart/v3/api-docs
               filters:
-                - PreserveHostHeader
                 - RewritePath=/api/v1/cart/v3/api-docs, /v3/api-docs
 eureka:
   client:

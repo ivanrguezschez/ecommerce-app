@@ -95,13 +95,14 @@ services:
     networks:
       - ecommerce-microservices
 
+  # Vamos a crear dos instancias de este microservicio para probar el load balancer
   product-service:
     build:
       # context: .
       # dockerfile: ./microservices/product-service/Dockerfile
       context: ./microservices/product-service
       dockerfile: Dockerfile
-    container_name: product-service
+    # container_name: product-service
     depends_on:
       config-service:
         condition: service_healthy
@@ -109,8 +110,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_started
-    ports:
-      - "${PRODUCT_SERVICE_PORT}:8092"
+    # ports:
+      # - "${PRODUCT_SERVICE_PORT}:8092"
     volumes:
       - ../logs:/app/logs
     environment:
@@ -122,13 +123,14 @@ services:
     networks:
       - ecommerce-microservices
 
+  # Vamos a crear dos instancias de este microservicio para probar el load balancer
   cart-service:
     build:
       # context: .
       # dockerfile: ./microservices/cart-service/Dockerfile
       context: ./microservices/cart-service
       dockerfile: Dockerfile
-    container_name: cart-service
+    # container_name: cart-service
     depends_on:
       config-service:
         condition: service_healthy
@@ -136,8 +138,8 @@ services:
         condition: service_healthy
       mongo:
         condition: service_started
-    ports:
-      - "${CART_SERVICE_PORT}:8093"
+    # ports:
+      # - "${CART_SERVICE_PORT}:8093"
     volumes:
       - ../logs:/app/logs
     environment:
